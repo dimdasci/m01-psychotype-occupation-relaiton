@@ -1,0 +1,17 @@
+name: masterskaya01
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - ipykernel
+  - python=3.9.12
+  - notebook
+  - nb_conda_kernels
+  - jupyter_contrib_nbextensions
+  - gensim[version='<4.0.0']
+  - pandas
+  - matplotlib[version='<3.5.0']
+  - requests
+  - scikit-learn
+prefix: /Users/dkharitonov/opt/anaconda3/envs/masterskaya01
