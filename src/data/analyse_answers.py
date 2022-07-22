@@ -17,7 +17,9 @@ EXTRA_STOPWORDS = ['участок', 'отдел', 'группа', 'другой
                    'посредничество', 'школьник', 'безработный', 
                    'студент', 'студентка', 'ученик', 'ученица',
                    'поиск', 'учёба', 'школа',
-                   'мама', 'пенсионер', 'пенсия']
+                   'родитель', 'шея', 'курс', 'стипендия',
+                   'мама', 'пенсионер', 'пенсия',
+                   'год', 'класс', 'маленький']
 
 # функции
 def count_verbs(words: list) -> int:
@@ -90,19 +92,22 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
         words, n_out_of_vocab = spell_check(words)
 
         # определим, есть ли отрицание в ответе
-        has_negative = 1 if ('не' in words) or ('ни' in words) or ('без' in words) else 0
+        has_negative = 1 if ('нет' in words) or ('не' in words)\
+                             or ('ни' in words) or ('без' in words)\
+                         else 0
 
         # посчитаем количество глаголов
         n_verbs = count_verbs(words)
 
         # разобьем на токены и удалим стоп-слова
-        tokens = drop_stopwords(tokenize_drop_punkt(' '.join(words)), 
-                                extra_stop_words=EXTRA_STOPWORDS)
+        tokens = tokenize_drop_punkt(' '.join(words))
 
         # приведем токены к номальной форме, оставим только существительные и прилагательные
         normalized_tokens = normalize_tokens(tokens)
         
-        tokens.sort()
+        # удалим стоп-слова
+        normalized_tokens = drop_stopwords(normalized_tokens, extra_stop_words=EXTRA_STOPWORDS) 
+
         normalized_tokens.sort()
 
         # добавим к датасету результаты анализа
