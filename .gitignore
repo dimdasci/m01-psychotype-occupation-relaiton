@@ -1,4 +1,5 @@
 notebooks/.ipynb_checkpoints/
 datasets/raw/
+datasets/intermediate/
 reports/
 __pycache__
