@@ -44,7 +44,9 @@ def normalize_tokens(tokens: list) -> list:
     for word in tokens:
         p = MA.parse(word)[0]
         # для слесарь у pymorh на первом месте глагол слесарить, добавим исключение
-        if word == 'слесарь' or 'NOUN' in p.tag or 'ADJF' in p.tag:
+        if (word == 'слесарь'):
+            words.append(word)
+        elif ('NOUN' in p.tag) or ('ADJF' in p.tag) or ('ADJS' in p.tag):
             words.append(p.normal_form)
     return words  
 
