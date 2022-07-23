@@ -35,18 +35,28 @@ def count_verbs(words: list) -> int:
 
     return cnt
 
-def has_negative(words: list) -> int:
-    '''Определяет, есть ли среди слов отрицания
+def find_words(what: list, where: list) -> int:
+    '''Ищет превое вхождение любого элемента what в where 
     '''
     found = 0
-    negaties = ['нет', 'не', 'ни', 'никем', 'без', 'никто', 'некем', 'некто']
-    for word in words:
-        if word.lower() in negaties:
+    for word in where:
+        if word.lower() in what:
             found = 1
             break
-    
+
     return found
 
+def check_negative(words: list) -> int:
+    '''Определяет, есть ли среди слов отрицания
+    '''
+    negaties = ['нет', 'не', 'ни', 'никем', 'без', 'никто', 'некем', 'некто']
+    return find_words(what=negaties, where=words)
+
+def check_past_or_future(words: list) -> int:
+    '''Определяет, есть ли упоминания прошлого или будущего
+    '''
+    past_future = ['бывший', 'бывшая', 'будущий', 'будушая']
+    return find_words(what=past_future, where=words)
 
 @click.command()
 @click.argument('source', type=click.Path(exists=True))
@@ -79,7 +89,7 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
     
     # добавим новые столбцы
     df['corrected'] = ''
-    for col in ['n_out_of_vocab', 'n_words', 'n_verbs', 'has_negative']:
+    for col in ['n_out_of_vocab', 'n_words', 'n_verbs', 'has_negative', 'has_past_future']:
         df[col] = 0
 
     for i, row in tqdm(df.iterrows(), total=df.shape[0]):
@@ -104,7 +114,7 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
         words, n_out_of_vocab = spell_check(words)
 
         # определим, есть ли отрицание в ответе
-        has_negative = has_negative(words)
+        has_negative = check_negative(words)
 
         # посчитаем количество глаголов
         n_verbs = count_verbs(words)
@@ -122,12 +132,16 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
         normalized_tokens = list(set(normalized_tokens))
         normalized_tokens.sort()
 
+        # проверим, есть ли упоминаение будущего или прошлого
+        has_past_future = check_past_or_future(words)
+
         # добавим к датасету результаты анализа
         df.loc[i, 'corrected'] = ' '.join(words)
         df.loc[i, 'n_out_of_vocab'] = n_out_of_vocab
         df.loc[i, 'n_words'] = len(words)
         df.loc[i, 'n_verbs'] = n_verbs
         df.loc[i, 'has_negative'] = has_negative
+        df.loc[i, 'has_past_future'] = has_past_future
         df.loc[i, 'tokenized'] = ' '.join(tokens)
         df.loc[i, 'normalized'] = ' '.join(normalized_tokens)
 
