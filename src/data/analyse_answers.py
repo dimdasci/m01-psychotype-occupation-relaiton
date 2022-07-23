@@ -35,6 +35,18 @@ def count_verbs(words: list) -> int:
 
     return cnt
 
+def has_negative(words: list) -> int:
+    '''Определяет, есть ли среди слов отрицания
+    '''
+    found = 0
+    negaties = ['нет', 'не', 'ни', 'никем', 'без', 'никто', 'некем', 'некто']
+    for word in words:
+        if word.lower() in negaties:
+            found = 1
+            break
+    
+    return found
+
 
 @click.command()
 @click.argument('source', type=click.Path(exists=True))
@@ -92,9 +104,7 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
         words, n_out_of_vocab = spell_check(words)
 
         # определим, есть ли отрицание в ответе
-        has_negative = 1 if ('нет' in words) or ('не' in words)\
-                             or ('ни' in words) or ('без' in words)\
-                         else 0
+        has_negative = has_negative(words)
 
         # посчитаем количество глаголов
         n_verbs = count_verbs(words)
