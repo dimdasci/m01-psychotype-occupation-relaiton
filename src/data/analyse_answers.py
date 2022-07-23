@@ -118,6 +118,8 @@ def analyse_answers(source: str, destination: str, col_name: str) -> None:
         # удалим стоп-слова
         normalized_tokens = drop_stopwords(normalized_tokens, extra_stop_words=EXTRA_STOPWORDS) 
 
+        # удалим повторы и отсортируем
+        normalized_tokens = list(set(normalized_tokens))
         normalized_tokens.sort()
 
         # добавим к датасету результаты анализа
