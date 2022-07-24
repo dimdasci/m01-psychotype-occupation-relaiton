@@ -21,6 +21,7 @@ SYM_SPELL = SymSpell(max_dictionary_edit_distance=3, prefix_length=7)
 BASE_PATH = '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-2])
 DICTIONARY_PATH = BASE_PATH + '/models/symspell/professions.txt'
 ABBREVIATIONS_PATH = BASE_PATH + '/datasets/external/abbreviation.csv'
+EXTRASTOPWORDS_PATH = BASE_PATH + '/datasets/external/extrastopwords.csv'
 
 SYM_SPELL.load_dictionary(DICTIONARY_PATH, 0, 1)
 
@@ -50,11 +51,16 @@ def normalize_tokens(tokens: list) -> list:
             words.append(p.normal_form)
     return words  
 
-def read_abbreviations_dictionary(filename: str='../datasets/external/abbreviation.csv') -> dict:
+def read_abbreviations_dictionary() -> dict:
     '''Считывает словарь из CSV файла и преобразует в dict'''
     data = pd.read_csv(ABBREVIATIONS_PATH, sep=';')
     return dict(zip(data.abbreviation.to_list(), 
                     data.meaning.to_list()))
+
+def read_stopwords_dictionary() -> list:
+    '''Считывает словарь из CSV файла и преобразует в dict'''
+    data = pd.read_csv(EXTRASTOPWORDS_PATH, sep=';')
+    return data.stopword.to_list()
 
 def unfold_abbreviation(words: list, abbreviations: dict) -> list:
     '''Расшифровывает аббревиатуры и возвращает список слов'''
